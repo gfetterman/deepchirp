@@ -12,6 +12,7 @@ def sampling_encoder(params):
     extras = {x: len(encoder) + 1 + ith
             for ith, x in enumerate(params['sampling_encoder_extras'])}
     encoder.update(extras)
+    print(encoder)
     return encoder
 
 def get_generator(trainingdir, spa, params):

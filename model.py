@@ -5,7 +5,7 @@ from keras.layers.wrappers import TimeDistributed, Bidirectional
 from keras.layers.core import Dropout
 from keras.layers.normalization import BatchNormalization
 
-def dummy(n_timesteps, n_freqs, n_cats):
+def dummy_model(n_timesteps, n_freqs, n_cats):
     model = Sequential()
     model.add(Conv2D(1,
                      kernel_size=(1, 1),
@@ -292,81 +292,23 @@ def simplecnn5(n_timesteps, n_freqs, n_cats):
                   metrics=['accuracy'])
     return model
 
-def simplecnn4_long2(n_timesteps, n_freqs, n_cats):
-    model = Sequential()
-    model.add(Conv2D(32,
-                     kernel_size=(5, 5),
-                     activation='relu',
-                     input_shape=(n_timesteps, n_freqs, 1)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(32, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(64, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(64, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(128, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(128, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(256, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(512, kernel_size=(4, 1), activation='relu'))
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Dropout(0.4))
-    model.add(Dense(n_cats, activation='softmax'))
-    model.compile(loss=keras.losses.categorical_crossentropy,
-                  optimizer=keras.optimizers.Adam(),
-                  metrics=['accuracy'])
-    return model
-
-
-def simplecnn4_long(n_timesteps, n_freqs, n_cats):
-    model = Sequential()
-    model.add(Conv2D(32,
-                     kernel_size=(5, 5),
-                     activation='relu',
-                     input_shape=(n_timesteps, n_freqs, 1)))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(32, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(64, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(64, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(128, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu'))
-    model.add(Flatten())
-    model.add(Dense(128))
-    model.add(Dropout(0.4))
-    model.add(Dense(n_cats, activation='softmax'))
-    model.compile(loss=keras.losses.categorical_crossentropy,
-                  optimizer=keras.optimizers.Adam(),
-                  metrics=['accuracy'])
-    return model
-
-
 def simplecnn4_short(n_timesteps, n_freqs, n_cats):
     model = Sequential()
-    model.add(Conv2D(32,
+    model.add(Conv2D(16,
                      kernel_size=(5, 5),
                      activation='relu',
                      input_shape=(n_timesteps, n_freqs, 1)))
+    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(16, kernel_size=(1, 1), activation='relu'))
+    model.add(Conv2D(32, kernel_size=(4, 4), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
     model.add(BatchNormalization())
     model.add(Conv2D(32, kernel_size=(1, 1), activation='relu'))
     model.add(Conv2D(64, kernel_size=(4, 4), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
     model.add(BatchNormalization())
-    model.add(Conv2D(64, kernel_size=(1, 1), activation='relu'))
-    model.add(Conv2D(128, kernel_size=(4, 4), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
-    model.add(BatchNormalization())
-    model.add(Conv2D(256, kernel_size=(3, 3), activation='relu'))
+    model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
     model.add(Flatten())
     model.add(Dense(128))
     model.add(Dropout(0.4))

@@ -2,8 +2,8 @@ import numpy as np
 import bark
 from scipy import stats
 
-default_min_syl = 30
-default_min_silent = 15
+default_min_syl = 20
+default_min_silent = 25
 def first_pass(cats, decoder, time_interval):
     '''cats:  a vector of length N, where N is the number of targets
         decoder: a map from values in cats to a syllable name
@@ -32,11 +32,14 @@ def first_pass(cats, decoder, time_interval):
     return starts, stops, names
 
 def second_pass(starts, stops, names, min_silent):
-    ' If two syllables are within min_silent, join them'
+    ' If two syllables are within min_silent, join them, use largest segment as label'
     i = 1
     while i < len(starts):
-        if starts[i] - stops[i - 1] <= min_silent and names[i] == names[i - 1]:
+        if starts[i] - stops[i - 1] <= min_silent:
             stops[i - 1] = stops[i]
+            l_len = stops[i - 1] - starts[i - 1]
+            r_len = stops[i] - starts[i]
+            larger_name = names[i - 1] if l_len > r_len else names[i]
             del starts[i]
             del stops[i]
             del names[i]

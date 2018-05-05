@@ -66,15 +66,11 @@ def remove_noise_samples(df, noise_name):
     n_noise = len(df.name[(df.name == noise_name)])
     noisefreedf = df[df.name != noise_name]
     print(noisefreedf.name.groupby(noisefreedf.name).count())
-    if len(noisefreedf) == 0:
-        print('Warning! No syllables! Returning empty dataframe.')
-        return noisefreedf
     avg_class_count = int(noisefreedf.name.groupby(noisefreedf.name).count(
     ).mean())
     n_drop = n_noise - avg_class_count
     if n_drop < 0:
         return df
-    df.reset_index(drop=True, inplace=True)
     noise_locs = np.array(df.index[df.names == noise_name])
     np.random.shuffle(noise_locs)
     drop_noise_ix = noise_locs[:n_drop]

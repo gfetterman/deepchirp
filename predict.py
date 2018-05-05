@@ -1,5 +1,3 @@
-import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
 from utils import default_model_filename, save, read_files, create_spectra
 from preprocess import data_generator
 import keras
@@ -7,9 +5,6 @@ import numpy as np
 import os.path
 import yaml
 
-config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.5
-set_session(tf.Session(config=config))
 
 def predict(model, sampled_dset, spa, p):
     # note: loop must be set to true to enable using keras's predict_generator
