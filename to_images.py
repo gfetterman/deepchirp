@@ -4,7 +4,8 @@ import yaml
 import numpy as np
 import os.path
 import shutil
-from utils import decode, create_spectra, read_files, default_image_directory
+from utils import decode, create_spectra, default_image_directory
+import bark
 
 def sampling_encoder(params):
     'add extras to encoder to ensure even sampling'
@@ -14,9 +15,10 @@ def sampling_encoder(params):
     encoder.update(extras)
     return encoder
 
-def get_generator(trainingdir, spa, params):
+def get_generator(trainingdir, spa, params, sampled_dset, label_dset):
     encoder = sampling_encoder(params)
-    sampled_dsets, event_dsets = read_files(trainingdir, params)
+    sampled_dsets = [bark.read_sampled(os.path.join(dir, sampled_dset)) for dir in trainingdir]
+    event_dsets = [bark.read_events(os.path.join(dir, label_dset)) for dir in trainingdir]
     for sampled_dset, event_dset in zip(sampled_dsets, event_dsets):
         data_gen = data_generator(spa,
                                   sampled_dset.data,
@@ -85,14 +87,18 @@ def save_to_disk(image_dir, dg, spa, p, png=False, max_samples_per_category=5000
         counter[yname] += 1
 
 
-def main(trainingdir, paramfile, birdparams,
-        png=False,
-        outdir=None,
-        test_fraction=0.05):
+def main(trainingdir,
+         paramfile,
+         birdparams,
+         sampled_dset,
+         label_dset,
+         png=False,
+         outdir=None,
+         test_fraction=0.05):
     p = yaml.safe_load(open(paramfile, 'r'))
     p.update(yaml.safe_load(open(birdparams, 'r')))
     spa = create_spectra(p)
-    datagen = get_generator(trainingdir, spa, p)
+    datagen = get_generator(trainingdir, spa, p, sampled_dset, label_dset)
     if outdir is None:
         outdir = default_image_directory(paramfile, birdparams)
     out_train_dir = os.path.join(outdir, 'train')
@@ -107,7 +113,6 @@ if __name__ == '__main__':
     Create a series of labeled two-dimensional 'images' from a training dataset
 
     sampled data must have the extension .dat
-    labels must have the same name as data, but with the .csv extension
 
     both .dat and .csv files must have Bark metadata files.
 
@@ -115,13 +120,16 @@ if __name__ == '__main__':
     PNG images. Only numpy arrays can be used for training, but the PNG images
     are useful for visualizing the input.
     ''')
-    p.add_argument('trainingdir', help='directory containing training examples')
+    p.add_argument('sampled_dset', help='sampled dataset containing waveforms in the training dirs')
+    p.add_argument('label_dset', help='event dataset containing labels in the training dirs')
     p.add_argument('params', help='a parameters file')
     p.add_argument('birdparams', help='bird-specific parameters')
+    p.add_argument('trainingdir', help='directory containing training examples (can provide >1', nargs='+')
     p.add_argument('-o', '--outdir', help='directory to save training images')
     p.add_argument('-t', '--testfraction', help='fraction of images to save for testing, default=0.05',
             type=float)
     p.add_argument('--png', help='save output as viewable images',
                    action='store_true')
     args = p.parse_args()
-    main(args.trainingdir, args.params, args.birdparams, args.png, args.outdir)
+    main(args.trainingdir, args.params, args.birdparams, args.sampled_dset, args.label_dset, args.png, args.outdir)
+
