@@ -48,6 +48,7 @@ def create_spectra(params):
                          n_tapers=p['n_tapers'],
                          NFFT=p['NFFT'],
                          data_window=p['data_window'],
+                         NW=p['NW'],
                          noverlap=noverlap)
     window_len = p['window_len']
     n_timesteps = window_len * 2 + 1
