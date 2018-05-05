@@ -9,13 +9,6 @@ def strip_tiers(df, song_tier):
     return df
 
 
-def shorten_and_lowercase_names(df):
-    df = df[df.name != '']
-    df.names = df.name.str[0]
-    df.names = df.name.str.lower()
-    return df
-
-
 def add_boundaries(df, boundary_size=0.03, boundary_label='__'):
     labels = df.to_dict('records')
     i = 0
@@ -102,9 +95,8 @@ def main(in_csv,
 if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser(
-        description="""enrich a csv for training a neural network,
-                       simplifies labels to first letter and
-                       discards most noise labels""")
+        description="""enrich a csv for training a neural network
+                       and discard most noise labels""")
     p.add_argument("incsv")
     p.add_argument("outcsv")
     p.add_argument("-n",
@@ -121,8 +113,6 @@ if __name__ == '__main__':
                    "--boundary-label",
                    help="boundary label, default: __",
                    default='__')
-
-
     args = p.parse_args()
     main(args.incsv, args.outcsv, args.noise, args.tier, args.boundary,
             args.boundary_label)
